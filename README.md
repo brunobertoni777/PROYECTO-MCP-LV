@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Las Varillas Digital: MCP + FastAPI + React
 
 ## Estructura
@@ -57,3 +58,6 @@ Abrir http://localhost:5173.
 - "¿Qué dice el Centro de Estudios Parada KM 81?" → 1900
 - "Dame un resumen de las tres teorías."
 - "¿Cuándo llegó el tren?" → 1904 (y 1903 como contexto)
+=======
+# PROYECTO-MCP-LV
+>>>>>>> d207ca4d723d51f9fe51eec6fef849f48fa7eafd
