@@ -1,4 +1,3 @@
-import os
 import sys
 import json
 import re
@@ -6,21 +5,29 @@ import asyncio
 import logging
 import requests
 from contextlib import asynccontextmanager, AsyncExitStack
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("mcp-backend")
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = BASE_DIR
-SERVER_SCRIPT = os.path.join(ROOT_DIR, "server.py")
-DATA_FILE = os.path.join(ROOT_DIR, "fundacion.json")
-# sys.executable = el Python del venv con el que lanzaste el backend (sirve en Windows, Mac y Linux)
-PYTHON_PATH = sys.executable
+# ---------- Rutas ----------
+# Estructura esperada:
+# proyecto/
+# ├── backend/        (main.py, server.py, fundacion.json)
+# ├── assets/         (los .svg)
+# └── index.html
+BASE_DIR = Path(__file__).resolve().parent      # carpeta backend/
+FRONT_DIR = BASE_DIR                     # carpeta raíz (assets e index.html)
+SERVER_SCRIPT = str(BASE_DIR / "server.py")
+DATA_FILE = BASE_DIR / "fundacion.json"
+PYTHON_PATH = sys.executable                    # Python del venv actual
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
 MODELO = "llama3.2"
@@ -49,16 +56,16 @@ async def lifespan(app: FastAPI):
 
         index = await session.call_tool("consultar_fundacion_las_varillas", arguments={"tema": ""})
         state.system_prompt = {
-    "role": "system",
-    "content": (
-        "Eres un historiador experto en la ciudad de Las Varillas. Responde siempre en español.\n"
-        "El índice es solo un resumen. Si el usuario pregunta por algo específico (personas, "
-        "fechas, teorías), DEBES llamar a la herramienta consultar_fundacion_las_varillas "
-        "usando el término o ID como parámetro 'tema'.\n"
-        "Si la herramienta no encuentra nada, dilo con honestidad y no inventes datos.\n"
-        f"ÍNDICE RESUMIDO:\n{index.content[0].text}"
-    )
-}
+            "role": "system",
+            "content": (
+                "Eres un historiador experto en la ciudad de Las Varillas. Responde siempre en español.\n"
+                "El índice es solo un resumen. Si el usuario pregunta por algo específico (personas, "
+                "fechas, teorías), DEBES llamar a la herramienta consultar_fundacion_las_varillas "
+                "usando el término o ID como parámetro 'tema'.\n"
+                "Si la herramienta no encuentra nada, dilo con honestidad y no inventes datos.\n"
+                f"ÍNDICE RESUMIDO:\n{index.content[0].text}"
+            ),
+        }
         logger.info("MCP conectado y listo.")
         yield
     logger.info("MCP desconectado.")
@@ -68,9 +75,10 @@ app = FastAPI(lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 
+# ---------- API ----------
 @app.get("/api/fundacion")
 def get_fundacion():
-    if not os.path.exists(DATA_FILE):
+    if not DATA_FILE.exists():
         raise HTTPException(status_code=404, detail="Archivo de datos no encontrado.")
     with open(DATA_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -155,13 +163,16 @@ async def websocket_endpoint(websocket: WebSocket):
             pass
 
 
+# ---------- Archivos estáticos y página principal (AL FINAL de las rutas) ----------
+app.mount("/assets", StaticFiles(directory=FRONT_DIR / "assets"), name="assets")
+
+
+@app.get("/")
+def home():
+    return FileResponse(FRONT_DIR / "index.html")
+
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)
-
-from fastapi.responses import HTMLResponse
-
-@app.get("/", response_class=HTMLResponse)
-async def read_index():
-    with open("index.html", "r", encoding="utf-8") as f:
-        return f.read()
+    # Se pasa el objeto app directamente para que funcione sin importar desde dónde se ejecute
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=False)

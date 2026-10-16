@@ -6,39 +6,65 @@
 <title>Las Varillas · ¿cómo puedo ayudarte?</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--blue:#00aeef;--yellow:#ffcb2d;--ink:#111}
+  :root{--blue:#0099ff;--yellow:#ffcc00;--ink:#111}
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;overflow:hidden}
-  body{font-family:Poppins,system-ui,sans-serif;background:var(--blue);color:var(--ink)}
-  .bg{position:fixed;inset:0;width:100%;height:100%}
-  .logo{position:fixed;left:22px;top:30px;width:120px;z-index:3}
+  body{font-family:Poppins,system-ui,sans-serif;background:var(--yellow);color:var(--ink)}
 
-  /* buscador */
-  .pill{position:fixed;left:150px;top:62px;width:min(560px,calc(100vw - 175px));height:72px;z-index:3;display:flex;align-items:center;gap:18px;padding:0 26px;background:#fff;border-radius:40px;box-shadow:6px 8px 12px rgba(0,60,100,.35)}
-  .pill input{flex:1;min-width:0;border:0;outline:0;font:inherit;font-size:1.35rem;color:var(--ink);background:none}
-  .pill input::placeholder{color:#222;opacity:1}
+  /* 1. Fondo principal con la onda (fondo-las-varillas.svg) */
+  .bg-onda {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      pointer-events: none;
+  }
+
+  /* 2. Logo superior izquierdo (v-ave.svg) */
+  .logo {
+      position: fixed;
+      left: 30px;
+      top: 25px;
+      width: 160px;
+      z-index: 4;
+      pointer-events: none;
+  }
+
+  /* 3. Engranaje decorativo izquierdo (engranaje.svg) */
+  .bg-engranaje {
+      position: fixed;
+      top: 15%;
+      left: -40px;
+      width: 320px;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.9;
+  }
+
+  /* Buscador central ajustado */
+  .pill{position:fixed;left:15.2vw;top:9.6vh;width:51vw;height:max(56px,11.5vh);z-index:5;display:flex;align-items:center;gap:18px;padding:0 3vw 0 2.2vw;background:#fff;border-radius:40px;box-shadow:0 6px 20px rgba(0,80,140,.35)}  .pill input{flex:1;min-width:0;border:0;outline:0;font:inherit;font-size:1.15rem;color:var(--ink);background:none}
+  .pill input::placeholder{color:#555;opacity:1}
   .dot{width:10px;height:10px;border-radius:50%;background:#bbb;flex-shrink:0}.dot.ok{background:#22c55e}
 
-  /* respuesta */
-  .answer{position:fixed;left:150px;top:150px;width:min(560px,calc(100vw - 175px));max-height:calc(100vh - 330px);overflow-y:auto;z-index:3;background:rgba(255,255,255,.96);border-radius:26px;padding:20px 26px;box-shadow:6px 8px 14px rgba(0,60,100,.3);white-space:pre-wrap;line-height:1.6;font-size:.98rem;display:none}
-  .answer small{display:block;color:#0090c5;font-weight:600;margin-bottom:6px}
+  /* Respuesta del chat */
+  .answer{position:fixed;left:15.2vw;top:calc(9.6vh + max(56px,11.5vh) + 14px);width:51vw;max-height:calc(100vh - 220px);overflow-y:auto;z-index:5;background:rgba(255,255,255,.96);border-radius:26px;padding:20px 26px;box-shadow:0 10px 25px rgba(0,0,0,0.2);white-space:pre-wrap;line-height:1.6;font-size:.98rem;display:none}  .answer small{display:block;color:#0090c5;font-weight:600;margin-bottom:6px}
   .spin{display:inline-block;width:13px;height:13px;border:2px solid var(--blue);border-top-color:transparent;border-radius:50%;animation:r .8s linear infinite;margin-right:8px;vertical-align:-2px}
   @keyframes r{to{transform:rotate(360deg)}}
 
-  /* menú abajo a la derecha */
-  #burger{position:fixed;right:34px;bottom:36px;width:46px;background:none;border:0;cursor:pointer;z-index:40;padding:6px 0}
-  #burger i{display:block;height:6px;border-radius:4px;background:#b9b9b9;margin:6px 0}
-  #nav{position:fixed;right:30px;bottom:34px;z-index:40;display:none;align-items:stretch;gap:14px;text-align:right}
-  #nav.on{display:flex}
+  /* Menú inferior derecho idéntico a la foto */
+  #nav{position:fixed;right:40px;bottom:25px;z-index:40;display:flex;flex-direction:column;text-align:right}
   #nav ul{list-style:none;margin:0;padding:0}
-  #nav li{margin:8px 0}
-  #nav a{cursor:pointer;font-size:1.35rem;color:var(--ink);text-decoration:none;display:inline-block}
-  #nav a.l::before{content:"•";margin-right:14px}
-  #nav a.h{font-weight:700;color:var(--blue);text-transform:uppercase;font-size:1.2rem}
-  #nav a.act{text-decoration:underline;text-underline-offset:6px}
-  #nav .bar{width:5px;background:#9a9a9a;border:0;padding:0;cursor:pointer;border-radius:3px}
+  #nav li{margin:2px 0}
+  #nav a{cursor:pointer;text-decoration:none;display:inline-block}
+  #nav a.l{font-size:0.95rem;color:#111;font-weight:600}
+  #nav a.l::before{content:"• ";margin-right:4px}
+  #nav a.h{font-weight:700;color:var(--blue);text-transform:uppercase;font-size:0.95rem;letter-spacing:0.05em}
+  #nav a.act{text-decoration:underline;text-underline-offset:4px}
+  #nav .bar{display:none}
 
-  /* fondo borroso + panel centrado */
+  /* Fondo borroso + panel centrado */
   #ov{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:30px 30px 110px;background:rgba(255,255,255,.18);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
   #ov.on{display:flex;animation:f .3s}
   @keyframes f{from{opacity:0}}
@@ -60,47 +86,39 @@
   .m.a{align-self:flex-start;background:#fff4cc;border-bottom-left-radius:4px}
   .empty{color:#666;text-align:center;padding:30px}
   .banner{background:#fff4cc;border-radius:12px;padding:8px 14px;font-size:.8rem;margin-bottom:16px}
-  @media(max-width:700px){.logo{width:70px;left:10px;top:36px}.pill{left:88px;width:calc(100vw - 104px);height:60px;top:46px}.pill input{font-size:1.05rem}.answer{left:16px;width:calc(100vw - 32px);top:124px}}
+
+  @media(max-width:700px){
+    .logo{width:38vw;left:4vw;top:2vh}
+    .pill{left:4vw;width:92vw;top:14vh}
+    .answer{left:4vw;width:92vw;top:calc(14vh + 70px)}
+  }
 </style>
 </head>
 <body>
 
-<!-- Fondo -->
-<svg class="bg" viewBox="0 0 1074 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-  <rect width="1074" height="640" fill="#00aeef"/>
-  <path fill="#ffcb2d" stroke="#ffcb2d" stroke-width="3" stroke-linejoin="round"
-    d="M0 300 L78 314 L55 360 L95 390 L100 436 L122 460 L170 448 L165 495 L260 488 L236 536 L300 578 L350 512 L440 430 L396 556 L422 592 L470 522 L525 438 L560 366 L600 300 L626 284 L596 382 L642 322 L690 242 L716 210 L682 302 L662 322 L752 232 L796 174 L746 252 L792 202 L862 162 L826 216 L872 196 L926 164 L900 202 L946 186 L1002 186 L1074 196 L1074 640 L0 640 Z"/>
-</svg>
+<!-- 1. Imagen de fondo principal (Onda) desde la carpeta assets -->
+<img src="./assets/fondo-las-varillas.svg" alt="Fondo Las Varillas" class="bg-onda">
 
-<!-- Logo (engranaje) -->
-<svg class="logo" viewBox="0 0 120 90" aria-hidden="true">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e5e5e5"/><stop offset="1" stop-color="#6d6d6d"/></linearGradient></defs>
-  <g transform="translate(46 50)">
-    <g fill="url(#g)">
-      <circle r="24"/>
-      <g id="teeth"><rect x="-5" y="-33" width="10" height="12" rx="2"/><rect x="-5" y="-33" width="10" height="12" rx="2" transform="rotate(45)"/><rect x="-5" y="-33" width="10" height="12" rx="2" transform="rotate(90)"/><rect x="-5" y="-33" width="10" height="12" rx="2" transform="rotate(135)"/><rect x="-5" y="-33" width="10" height="12" rx="2" transform="rotate(180)"/><rect x="-5" y="-33" width="10" height="12" rx="2" transform="rotate(225)"/><rect x="-5" y="-33" width="10" height="12" rx="2" transform="rotate(270)"/><rect x="-5" y="-33" width="10" height="12" rx="2" transform="rotate(315)"/></g>
-    </g>
-    <circle r="15" fill="#ffcb2d"/><circle r="8" fill="#00aeef"/>
-  </g>
-  <path d="M30 88 C60 40 90 8 118 8 C88 14 70 40 52 88 Z" fill="#fff" opacity=".95"/>
-</svg>
+<!-- 2. Engranaje decorativo izquierdo desde la carpeta assets -->
+<img src="assets/engranaje.svg" alt="Engranaje" class="bg-engranaje">
+
+<!-- 3. Logo superior izquierdo desde la carpeta assets -->
+<img src="assets/v-ave.svg" alt="Logo V-Ave" class="logo">
 
 <!-- Buscador -->
 <form class="pill" id="form">
-  <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6.5"/><path d="M15 15l6 6"/></svg>
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="2.5" stroke-linecap="round"><circle cx="10" cy="10" r="6.5"/><path d="M15 15l6 6"/></svg>
   <input id="inp" type="text" placeholder="¿cómo puedo ayudarte…?" autocomplete="off" autofocus>
   <span class="dot" id="dot" title="Estado del servidor"></span>
 </form>
 <div class="answer" id="answer"></div>
 
-<!-- Menú -->
-<button id="burger" aria-label="Abrir menú"><i></i><i></i><i></i></button>
+<!-- Menú inferior derecho -->
 <nav id="nav">
   <ul>
     <li><a class="l" id="goLibros">Libros, Las Varillas</a></li>
-    <li><a class="h" id="goChat">Historial de chat</a></li>
+    <li><a class="h" id="goChat">HISTORIAL DE CHAT</a></li>
   </ul>
-  <button class="bar" id="closeNav" aria-label="Cerrar menú"></button>
 </nav>
 
 <!-- Overlay borroso -->
@@ -123,8 +141,6 @@ const hist = [];
 let ws, busy = false, vista = null;
 
 /* ---------- Menú y overlay ---------- */
-$("burger").onclick = () => { $("burger").style.display = "none"; $("nav").classList.add("on"); };
-$("closeNav").onclick = () => { cerrar(); $("nav").classList.remove("on"); $("burger").style.display = "block"; };
 $("goLibros").onclick = () => abrir("libros");
 $("goChat").onclick = () => abrir("chat");
 $("ov").onclick = e => { if (e.target === $("ov")) cerrar(); };
